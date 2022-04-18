@@ -39,21 +39,24 @@ Shader "Unlit/FirstUnlitShader"
             Interpolators vert (MeshData v)
             {
                 Interpolators o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv0, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
+                o.vertex = UnityObjectToClipPos(v.vertex);//Local space to clip space
                 return o;
             }
 
-            fixed4 frag (Interpolators i) : SV_Target
+            //Final function that returns the color of the pixel to the screen
+            //fixed4 is just a float4 with less precision (no platform ever uses it anymore)
+
+            // float (32 bit float) Kind of overkill, but good to use as default unless targetting lower end hardware or optimizing
+            // half (16 bit float) Pretty good for most things
+            // fixed (lower precision float) -1 to 1 (no platform ever uses it anymore)
+
+
+            float4 frag (Interpolators i) : SV_Target //The SV semantics says that this should output to the frame buffer in most cases
             {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                float4 col = float4(0.0, 0.0, 0.0, 1.0);
                 return col;
             }
             ENDCG
         }
     }
-}
+} 
