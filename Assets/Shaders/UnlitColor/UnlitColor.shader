@@ -1,10 +1,10 @@
-Shader "Seb/ReferenceShader"
+Shader "Seb/UnlitColor"
 {
     //Properties are shows in the inspector. 
     //WARNING: Defining a property is not enough, you have to define a variable in the shader code with the same name.
     Properties
     {
-        _Value ("Value", Float) = 0.0
+        _Color ("Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -19,7 +19,7 @@ Shader "Seb/ReferenceShader"
 
             #include "UnityCG.cginc"
 
-            float _Value;
+            float4 _Color;
 
             struct MeshData //Per vertex mesh data
             {
@@ -53,8 +53,7 @@ Shader "Seb/ReferenceShader"
 
             float4 frag (Interpolators i) : SV_Target //The SV semantics says that this should output to the frame buffer in most cases
             {
-                float4 col = float4(0.0, 0.0, 0.0, 1.0);
-                return col;
+                return _Color;
             }
             ENDCG
         }
