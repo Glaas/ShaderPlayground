@@ -1,11 +1,8 @@
-Shader "Seb/ReferenceShader"
+Shader "Seb/NormalsAsColor"
 {
     //Properties are shows in the inspector. 
     //WARNING: Defining a property is not enough, you have to define a variable in the shader code with the same name.
-    Properties
-    {
-        _Value ("Value", Float) = 0.0
-    }
+ 
     SubShader
     {
         Tags { "RenderType"="Opaque" }
@@ -24,6 +21,7 @@ Shader "Seb/ReferenceShader"
             struct MeshData //Per vertex mesh data
             {
                 float4 vertex : POSITION; //Vertex position
+                float4 normal : NORMAL; //Vertex normal
                 float2 uv0 : TEXCOORD0; //uv coordinates
             };
 
@@ -31,11 +29,14 @@ Shader "Seb/ReferenceShader"
             {
                 float4 vertex : SV_POSITION; //Clip space position
                 float2 uv : TEXCOORD0; //In this case TEXCOORD0 does NOT refer to UV channels
+                float4 normal : TEXCOORD1; //Normal
             };
+
 
             Interpolators vert (MeshData v)
             {
                 Interpolators o;
+                o.normal = v.normal;
                 o.vertex = UnityObjectToClipPos(v.vertex);//Local space to clip space
                 return o;
             }
@@ -50,7 +51,7 @@ Shader "Seb/ReferenceShader"
 
             float4 frag (Interpolators i) : SV_Target //The SV semantics says that this should output to the frame buffer in most cases
             {
-                float4 col = float4(0.0, 0.0, 0.0, 1.0);
+                float4 col = float4 (i.normal.x, i.normal.y, i.normal.z, i.normal.w);
                 return col;
             }
             ENDCG
